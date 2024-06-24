@@ -9,9 +9,9 @@ from rich.panel import Panel
 from rich.style import Style
 import pandas as pd
 import click
+##### on importe toutes les libraries ! 
 
-
-def resize_terminal(columns, lines):
+def resize_terminal(columns, lines): #ça c'ets juste pour que la fenetre soit assez grande pour 
     current_os = platform.system()
     if current_os == 'Windows':
         os.system(f'mode con: cols={columns} lines={lines}')
@@ -19,55 +19,25 @@ def resize_terminal(columns, lines):
         os.system(f'printf "\\e[8;{lines};{columns}t"')
     else:
         print(f"Redimensionnement du terminal non supporté pour l'OS: {current_os}")
+        
+#Parcourt tout le fichier CSV
 def ReadCsv():
     with open("datas.csv", "r") as file:
         reader = csv.DictReader(file, delimiter=",")
         data = list(reader)
     return data
-
+#Si le fichier n'existe pas, lé créer
 def CreateCsv():
     with open('datas.csv', 'w', newline='') as csvfile:
         fieldnames = ["Nom", "Type", "Catégorie", "Description", "URL", "Fonctionnalités", "Prix", "Évaluation", "Commentaires", "Développeur/Éditeur"]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
-
+#Cette fonction vérifie donc si le fichier existe sinon le créer
 def CheckCsvFile():
     if not os.path.exists('datas.csv'):
         CreateCsv()
     return ReadCsv()
 
-# Affichage d'une ligne de trait
-# def AfficherCsv(datas):
-#     if not datas:
-#         print("Le fichier CSV est vide...")
-#         return
-
-#     space = ''
-#     print(f'{space:-^150}')
-#     # affichage de la première ligne # celle qui contient les clés 
-#     print("|", end="")
-#     for cle in datas[0]:
-#         print(f'{cle:^15}|', end="")
-#     print()
-#     print(f'|{space:-^150}|')
-#     # affichage des lignes du tableau
-#     for dict in datas:
-#         a = dict['Nom']
-#         b = dict['Type']
-#         c = dict['Catégorie']
-#         d = dict['Description']
-#         e = dict['URL']
-#         f = dict['Fonctionnalités']
-#         g = dict['Prix']
-#         h = dict['Évaluation']
-#         i = dict['Commentaires']
-#         j = dict['Développeur/Éditeur']
-#         print(f"|{a:^50}|{b:^50}|{c:^50}|")
-#         print(f"|{d:^50}|{e:^50}|{f:^50}|")
-#         print(f"|{g:^50}|{h:^50}|{i:^50}|")
-#         print(f"|{j:^50}|")
-        
-#         print(f'|{space:-^212}|')
 
 def Main():
     # resize_terminal(222,50)
@@ -77,7 +47,7 @@ def Main():
     content = CheckCsvFile()
     ShowCsv(content)
 
-        
+#Utilise la bibliothèque Rich pour générer un gros tableau dans ta console ! 
 def ShowCsv(datas):
 
     console = Console()
@@ -95,7 +65,7 @@ def ShowCsv(datas):
     table.add_column("Commentaires", style="dim",overflow="fold")
     table.add_column("Développeur/Éditeur", style="bold cyan",overflow="fold")
 
-
+    #Pour chaque ligne trouvée dans le CSV on ajoute la valeur de la "collone" pour la mettre dans le gros tableau 
     for dict in datas:
         table.add_row(
             dict['Nom'], 
@@ -120,6 +90,7 @@ def ShowCsv(datas):
         # Affichage de la table
     console.print(table)
     
+# Parcours le CSV en fonction des paramètres que l'utilisateur aura donné
 def FilterCsvSafe(csv_file, category, value):
     filtered_data = []
     
@@ -143,12 +114,12 @@ def FilterCsvSafe(csv_file, category, value):
         print(f"Erreur lors de la lecture du fichier CSV : {str(e)}")
     
     return filtered_data
-
+#trie le CSV et affiche le contenu une fois trié !
 def ShowFilteredResult(category,value):
     filtered_data = FilterCsvSafe('datas.csv', category, value)
     ShowCsv(filtered_data)
 
-  
+# la daube qui me sert de menu, hésite pas à l'améliorer, juste il sert à détecter si l'utilisateur à rentré un truc valable 
 def Menu():
     ascci_menu = r"""
   _____       _        _____ _ _                         
